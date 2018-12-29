@@ -18,12 +18,14 @@ package com.android.apksig.internal.util;
 
 import com.android.apksig.util.DataSink;
 import com.android.apksig.util.DataSource;
+
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import java.util.Arrays;
 
-/** Pseudo {@link DataSource} that chains the given {@link DataSource} as a continuous one. */
+/**
+ * Pseudo {@link DataSource} that chains the given {@link DataSource} as a continuous one.
+ */
 public class ChainedDataSource implements DataSource {
 
     private final DataSource[] mSources;
@@ -31,7 +33,13 @@ public class ChainedDataSource implements DataSource {
 
     public ChainedDataSource(DataSource... sources) {
         mSources = sources;
-        mTotalSize = Arrays.stream(sources).mapToLong(src -> src.size()).sum();
+        //IC: stream to java 7
+        //mTotalSize = Arrays.stream(sources).mapToLong(src -> src.size()).sum();
+        long sum = 0;
+        for (DataSource source : sources) {
+            sum += source.size();
+        }
+        mTotalSize = sum;
     }
 
     @Override
@@ -86,11 +94,20 @@ public class ChainedDataSource implements DataSource {
         ByteBuffer buffer = ByteBuffer.allocate(size);
         for (; i < mSources.length && buffer.hasRemaining(); i++) {
             long sizeToCopy = Math.min(mSources[i].size() - offset, buffer.remaining());
-            mSources[i].copyTo(offset, Math.toIntExact(sizeToCopy), buffer);
+            //IC: changed Math.toIntExact(sizeToCopy)
+            mSources[i].copyTo(offset, toIntExact(sizeToCopy), buffer);
             offset = 0;  // may not be zero for the first source, but reset after that.
         }
         buffer.rewind();
         return buffer;
+    }
+
+    //IC: added
+    private static int toIntExact(long value) {
+        if ((int) value != value) {
+            throw new ArithmeticException("integer overflow");
+        }
+        return (int) value;
     }
 
     @Override

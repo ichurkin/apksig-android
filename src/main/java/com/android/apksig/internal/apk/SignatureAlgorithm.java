@@ -59,7 +59,8 @@ public enum SignatureAlgorithm {
             0x0103,
             ContentDigestAlgorithm.CHUNKED_SHA256,
             "RSA",
-            Pair.of("SHA256withRSA", null),
+            //IC: cast
+            Pair.of("SHA256withRSA", (AlgorithmParameterSpec) null),
             AndroidSdkVersion.N),
 
     /** RSASSA-PKCS1-v1_5 with SHA2-512 digest, content digested using SHA2-512 in 1 MB chunks. */
@@ -67,7 +68,8 @@ public enum SignatureAlgorithm {
             0x0104,
             ContentDigestAlgorithm.CHUNKED_SHA512,
             "RSA",
-            Pair.of("SHA512withRSA", null),
+            //IC: cast
+            Pair.of("SHA512withRSA", (AlgorithmParameterSpec) null),
             AndroidSdkVersion.N),
 
     /** ECDSA with SHA2-256 digest, content digested using SHA2-256 in 1 MB chunks. */
@@ -75,7 +77,8 @@ public enum SignatureAlgorithm {
             0x0201,
             ContentDigestAlgorithm.CHUNKED_SHA256,
             "EC",
-            Pair.of("SHA256withECDSA", null),
+            //IC: cast
+            Pair.of("SHA256withECDSA", (AlgorithmParameterSpec) null),
             AndroidSdkVersion.N),
 
     /** ECDSA with SHA2-512 digest, content digested using SHA2-512 in 1 MB chunks. */
@@ -83,7 +86,8 @@ public enum SignatureAlgorithm {
             0x0202,
             ContentDigestAlgorithm.CHUNKED_SHA512,
             "EC",
-            Pair.of("SHA512withECDSA", null),
+            //IC: cast
+            Pair.of("SHA512withECDSA", (AlgorithmParameterSpec) null),
             AndroidSdkVersion.N),
 
     /** DSA with SHA2-256 digest, content digested using SHA2-256 in 1 MB chunks. */
@@ -91,7 +95,8 @@ public enum SignatureAlgorithm {
             0x0301,
             ContentDigestAlgorithm.CHUNKED_SHA256,
             "DSA",
-            Pair.of("SHA256withDSA", null),
+            //IC: cast
+            Pair.of("SHA256withDSA", (AlgorithmParameterSpec) null),
             AndroidSdkVersion.N),
 
     /**
@@ -103,7 +108,8 @@ public enum SignatureAlgorithm {
             0x0421,
             ContentDigestAlgorithm.VERITY_CHUNKED_SHA256,
             "RSA",
-            Pair.of("SHA256withRSA", null),
+            //IC: cast
+            Pair.of("SHA256withRSA", (AlgorithmParameterSpec) null),
             AndroidSdkVersion.P),
 
     /**
@@ -115,7 +121,8 @@ public enum SignatureAlgorithm {
             0x0423,
             ContentDigestAlgorithm.VERITY_CHUNKED_SHA256,
             "EC",
-            Pair.of("SHA256withECDSA", null),
+            //IC: cast
+            Pair.of("SHA256withECDSA", (AlgorithmParameterSpec) null),
             AndroidSdkVersion.P),
 
     /**
@@ -127,7 +134,8 @@ public enum SignatureAlgorithm {
             0x0425,
             ContentDigestAlgorithm.VERITY_CHUNKED_SHA256,
             "DSA",
-            Pair.of("SHA256withDSA", null),
+            //IC: cast
+            Pair.of("SHA256withDSA", (AlgorithmParameterSpec)null),
             AndroidSdkVersion.P);
 
     private final int mId;

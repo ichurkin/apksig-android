@@ -1181,7 +1181,8 @@ public abstract class V1SchemeVerifier {
                 String signatureAlgorithmOid) {
             List<InclusiveIntRange> result =
                     SUPPORTED_SIG_ALG_OIDS.get(digestAlgorithmOid + "with" + signatureAlgorithmOid);
-            return (result != null) ? result : Collections.emptyList();
+            //IC: changed
+            return (result != null) ? result : new ArrayList<InclusiveIntRange>();
         }
 
         private static class OidToUserFriendlyNameMapper {

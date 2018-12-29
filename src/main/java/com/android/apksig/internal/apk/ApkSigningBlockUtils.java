@@ -52,6 +52,9 @@ import java.security.spec.InvalidKeySpecException;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -405,10 +408,18 @@ public class ApkSigningBlockUtils {
             DataSource centralDir,
             DataSource eocd) throws IOException, NoSuchAlgorithmException, DigestException {
         Map<ContentDigestAlgorithm, byte[]> contentDigests = new HashMap<>();
-        Set<ContentDigestAlgorithm> oneMbChunkBasedAlgorithm = digestAlgorithms.stream()
-                .filter(a -> a == ContentDigestAlgorithm.CHUNKED_SHA256 ||
-                             a == ContentDigestAlgorithm.CHUNKED_SHA512)
-                .collect(Collectors.toSet());
+        //IC: to java 7
+        // Set<ContentDigestAlgorithm> oneMbChunkBasedAlgorithm = digestAlgorithms.stream()
+        //         .filter(a -> a == ContentDigestAlgorithm.CHUNKED_SHA256 ||
+        //                      a == ContentDigestAlgorithm.CHUNKED_SHA512)
+        //         .collect(Collectors.toSet());
+        Set<ContentDigestAlgorithm> oneMbChunkBasedAlgorithm = new HashSet<>();
+        for (ContentDigestAlgorithm a : digestAlgorithms) {
+            if (a == ContentDigestAlgorithm.CHUNKED_SHA256 ||
+                    a == ContentDigestAlgorithm.CHUNKED_SHA512) {
+                oneMbChunkBasedAlgorithm.add(a);
+            }
+        }
         computeOneMbChunkContentDigests(oneMbChunkBasedAlgorithm,
                 new DataSource[] { beforeCentralDir, centralDir, eocd },
                 contentDigests);
@@ -884,10 +895,23 @@ public class ApkSigningBlockUtils {
         if (bestSigAlgorithmOnSdkVersion.isEmpty()) {
             throw new NoSupportedSignaturesException("No supported signature");
         }
-        return bestSigAlgorithmOnSdkVersion.values().stream()
-                .sorted((sig1, sig2) -> Integer.compare(
-                        sig1.algorithm.getId(), sig2.algorithm.getId()))
-                .collect(Collectors.toList());
+        //IC: to java 7
+        // return bestSigAlgorithmOnSdkVersion.values().stream()
+        //         .sorted((sig1, sig2) -> Integer.compare(
+        //                 sig1.algorithm.getId(), sig2.algorithm.getId()))
+        //         .collect(Collectors.toList());
+        List<SupportedSignature> result = new ArrayList<>();
+        Collection<SupportedSignature> allSignatures = bestSigAlgorithmOnSdkVersion.values();
+        for (SupportedSignature s : allSignatures) {
+            result.add(s);
+        }
+        Collections.sort(result, new Comparator<SupportedSignature>() {
+            @Override
+            public int compare(SupportedSignature sig1, SupportedSignature sig2) {
+                return Integer.valueOf(sig1.algorithm.getId()).compareTo(Integer.valueOf(sig2.algorithm.getId()));
+            }
+        });
+        return result;
     }
 
     public static class NoSupportedSignaturesException extends Exception {

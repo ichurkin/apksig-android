@@ -116,8 +116,9 @@ public class SigningCertificateLineage {
             SignerConfig child, SignerCapabilities childCapabilities)
             throws CertificateEncodingException, InvalidKeyException, NoSuchAlgorithmException,
             SignatureException {
+        //IC:changed
         SigningCertificateLineage signingCertificateLineage =
-                new SigningCertificateLineage(minSdkVersion, new ArrayList<>());
+                new SigningCertificateLineage(minSdkVersion, new ArrayList<SigningCertificateNode>());
         signingCertificateLineage =
                 signingCertificateLineage.spawnFirstDescendant(parent, parentCapabilities);
         return signingCertificateLineage.spawnDescendant(parent, child, childCapabilities);

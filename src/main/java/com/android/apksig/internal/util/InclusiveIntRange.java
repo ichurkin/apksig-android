@@ -69,7 +69,8 @@ public class InclusiveIntRange {
                 result.add(fromTo(testValue, rangeMin - 1));
             }
             if (rangeMax >= max) {
-                return (result != null) ? result : Collections.emptyList();
+                //IC: changed
+                return (result != null) ? result : new ArrayList<InclusiveIntRange>();
             }
             testValue = rangeMax + 1;
         }
@@ -79,7 +80,8 @@ public class InclusiveIntRange {
             }
             result.add(fromTo(testValue, max));
         }
-        return (result != null) ? result : Collections.emptyList();
+        //IC: changed
+        return (result != null) ? result : new ArrayList<InclusiveIntRange>();
     }
 
     @Override

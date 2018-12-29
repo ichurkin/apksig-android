@@ -241,7 +241,8 @@ public class ApkSigner {
                 parseZipCentralDirectory(inputCd, inputZipSections);
 
         List<Pattern> pinPatterns = extractPinPatterns(inputCdRecords, inputApkLfhSection);
-        List<Hints.ByteRange> pinByteRanges = pinPatterns == null ? null : new ArrayList<>();
+        //IC: added new ArrayList<Hints.ByteRange>() instead of new ArrayList<>() for java 7
+        List<Hints.ByteRange> pinByteRanges = pinPatterns == null ? null : new ArrayList<Hints.ByteRange>();
 
         // Step 3. Obtain a signer engine instance
         ApkSignerEngine signerEngine;

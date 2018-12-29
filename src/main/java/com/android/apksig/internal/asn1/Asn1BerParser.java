@@ -29,6 +29,7 @@ import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -200,8 +201,16 @@ public final class Asn1BerParser {
     private static <T> T parseSequence(BerDataValue container, Class<T> containerClass,
             boolean isUnencodedContainer) throws Asn1DecodingException {
         List<AnnotatedField> fields = getAnnotatedFields(containerClass);
+        //IC: to java 7
+        // Collections.sort(
+        //         fields, (f1, f2) -> f1.getAnnotation().index() - f2.getAnnotation().index());
         Collections.sort(
-                fields, (f1, f2) -> f1.getAnnotation().index() - f2.getAnnotation().index());
+                fields, new Comparator<AnnotatedField>() {
+                    @Override
+                    public int compare(AnnotatedField f1, AnnotatedField f2) {
+                        return f1.getAnnotation().index() - f2.getAnnotation().index();
+                    }
+                });
         // Check that there are no fields with the same index
         if (fields.size() > 1) {
             AnnotatedField lastField = null;
@@ -507,23 +516,35 @@ public final class Asn1BerParser {
 
     private static int integerToInt(ByteBuffer encoded) throws Asn1DecodingException {
         BigInteger value = integerToBigInteger(encoded);
-        try {
-            return value.intValueExact();
-        } catch (ArithmeticException e) {
+        //IC: changed
+        // try {
+        //     return value.intValueExact();
+        // } catch (ArithmeticException e) {
+        //     throw new Asn1DecodingException(
+        //             String.format("INTEGER cannot be represented as int: %1$d (0x%1$x)", value), e);
+        // }
+        if (value.compareTo(BigInteger.valueOf(Integer.MAX_VALUE)) > 0) {
             throw new Asn1DecodingException(
-                    String.format("INTEGER cannot be represented as int: %1$d (0x%1$x)", value), e);
+                    String.format("INTEGER cannot be represented as int: %1$d (0x%1$x)", value));
         }
-    }
+        return value.intValue();
+}
 
     private static long integerToLong(ByteBuffer encoded) throws Asn1DecodingException {
         BigInteger value = integerToBigInteger(encoded);
-        try {
-            return value.longValueExact();
-        } catch (ArithmeticException e) {
+        //IC: changed
+        // try {
+        //     return value.longValueExact();
+        // } catch (ArithmeticException e) {
+        //     throw new Asn1DecodingException(
+        //             String.format("INTEGER cannot be represented as long: %1$d (0x%1$x)", value),
+        //             e);
+        // }
+        if (value.compareTo(BigInteger.valueOf(Long.MAX_VALUE)) > 0) {
             throw new Asn1DecodingException(
-                    String.format("INTEGER cannot be represented as long: %1$d (0x%1$x)", value),
-                    e);
+                    String.format("INTEGER cannot be represented as long: %1$d (0x%1$x)", value));
         }
+        return value.longValue();
     }
 
     private static List<AnnotatedField> getAnnotatedFields(Class<?> containerClass)

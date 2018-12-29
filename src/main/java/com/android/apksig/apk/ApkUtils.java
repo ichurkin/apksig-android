@@ -413,12 +413,16 @@ public abstract class ApkUtils {
             Pair.of('O', 25),
         };
 
-        private static final Comparator<Pair<Character, Integer>> CODENAME_FIRST_CHAR_COMPARATOR =
+        //IC: for java7
+//        private static final Comparator<Pair<Character, Integer>> CODENAME_FIRST_CHAR_COMPARATOR =
+//                new ByFirstComparator();
+        private static final Comparator<Pair<Character, ? extends Object>> CODENAME_FIRST_CHAR_COMPARATOR =
                 new ByFirstComparator();
 
-        private static class ByFirstComparator implements Comparator<Pair<Character, Integer>> {
+        //IC: for java7 in the same way
+        private static class ByFirstComparator implements Comparator<Pair<Character, ? extends Object>> {
             @Override
-            public int compare(Pair<Character, Integer> o1, Pair<Character, Integer> o2) {
+            public int compare(Pair<Character, ? extends Object> o1, Pair<Character, ? extends Object> o2) {
                 char c1 = o1.getFirst();
                 char c2 = o2.getFirst();
                 return c1 - c2;
