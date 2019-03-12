@@ -30,7 +30,6 @@ import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.Collection;
 
 /**
@@ -97,7 +96,7 @@ public class X509CertificateUtils {
      * @throws CertificateException if the encodedForm cannot be decoded to a valid certificate.
      */
     public static X509Certificate generateCertificate(byte[] encodedForm,
-            CertificateFactory certFactory) throws CertificateException {
+                                                      CertificateFactory certFactory) throws CertificateException {
         X509Certificate certificate;
         try {
             certificate = (X509Certificate) certFactory.generateCertificate(
@@ -210,7 +209,7 @@ public class X509CertificateUtils {
      * it is already DER encoded. If the buffer does begin with the PEM certificate header then the
      * certificate data is read from the buffer until the PEM certificate footer is reached; this
      * data is then base64 decoded and returned in a new ByteBuffer.
-     *
+     * <p>
      * If the buffer is in PEM format then the position of the buffer is moved to the end of the
      * current certificate; if the buffer is already DER encoded then the position of the buffer is
      * not modified.
@@ -261,7 +260,9 @@ public class X509CertificateUtils {
                                 + "valid certificate footer");
             }
         }
-        byte[] derEncoding = Base64.getDecoder().decode(pemEncoding.toString());
+
+        //IC: to android decoder
+        byte[] derEncoding = android.util.Base64.decode(pemEncoding.toString(), android.util.Base64.DEFAULT);
         // consume any trailing whitespace in the byte buffer
         int nextEncodedChar = certificateBuffer.position();
         while (certificateBuffer.hasRemaining()) {

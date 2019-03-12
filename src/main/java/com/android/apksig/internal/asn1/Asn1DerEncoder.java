@@ -16,6 +16,7 @@
 
 package com.android.apksig.internal.asn1;
 
+import com.android.apksig.icutils.Annotations;
 import com.android.apksig.internal.asn1.ber.BerEncoding;
 
 import java.io.ByteArrayOutputStream;
@@ -36,24 +37,26 @@ import java.util.List;
  * containing fields annotated with {@link Asn1Field}.
  */
 public final class Asn1DerEncoder {
-    private Asn1DerEncoder() {}
+    private Asn1DerEncoder() {
+    }
 
     /**
      * Returns the DER-encoded form of the provided ASN.1 structure.
      *
      * @param container container to be encoded. The container's class must meet the following
-     *        requirements:
-     *        <ul>
-     *        <li>The class must be annotated with {@link Asn1Class}.</li>
-     *        <li>Member fields of the class which are to be encoded must be annotated with
-     *            {@link Asn1Field} and be public.</li>
-     *        </ul>
-     *
+     *                  requirements:
+     *                  <ul>
+     *                  <li>The class must be annotated with {@link Asn1Class}.</li>
+     *                  <li>Member fields of the class which are to be encoded must be annotated with
+     *                  {@link Asn1Field} and be public.</li>
+     *                  </ul>
      * @throws Asn1EncodingException if the input could not be encoded
      */
     public static byte[] encode(Object container) throws Asn1EncodingException {
         Class<?> containerClass = container.getClass();
-        Asn1Class containerAnnotation = containerClass.getDeclaredAnnotation(Asn1Class.class);
+        //Asn1Class containerAnnotation = containerClass.getDeclaredAnnotation(Asn1Class.class);
+        Asn1Class containerAnnotation = Annotations.getDeclaredAnnotation(containerClass, Asn1Class.class);
+
         if (containerAnnotation == null) {
             throw new Asn1EncodingException(
                     containerClass.getName() + " not annotated with " + Asn1Class.class.getName());
@@ -202,20 +205,20 @@ public final class Asn1DerEncoder {
      * be smaller than the smallest possible value for an element.
      */
     private static class ByteArrayLexicographicComparator implements Comparator<byte[]> {
-            private static final ByteArrayLexicographicComparator INSTANCE =
-                    new ByteArrayLexicographicComparator();
+        private static final ByteArrayLexicographicComparator INSTANCE =
+                new ByteArrayLexicographicComparator();
 
-            @Override
-            public int compare(byte[] arr1, byte[] arr2) {
-                int commonLength = Math.min(arr1.length, arr2.length);
-                for (int i = 0; i < commonLength; i++) {
-                    int diff = (arr1[i] & 0xff) - (arr2[i] & 0xff);
-                    if (diff != 0) {
-                        return diff;
-                    }
+        @Override
+        public int compare(byte[] arr1, byte[] arr2) {
+            int commonLength = Math.min(arr1.length, arr2.length);
+            for (int i = 0; i < commonLength; i++) {
+                int diff = (arr1[i] & 0xff) - (arr2[i] & 0xff);
+                if (diff != 0) {
+                    return diff;
                 }
-                return arr1.length - arr2.length;
             }
+            return arr1.length - arr2.length;
+        }
     }
 
     private static List<AnnotatedField> getAnnotatedFields(Object container)
@@ -224,7 +227,8 @@ public final class Asn1DerEncoder {
         Field[] declaredFields = containerClass.getDeclaredFields();
         List<AnnotatedField> result = new ArrayList<>(declaredFields.length);
         for (Field field : declaredFields) {
-            Asn1Field annotation = field.getDeclaredAnnotation(Asn1Field.class);
+            Asn1Field annotation = Annotations.getDeclaredAnnotation(field, Asn1Field.class);
+
             if (annotation == null) {
                 continue;
             }
@@ -345,7 +349,8 @@ public final class Asn1DerEncoder {
             throws Asn1EncodingException {
         try {
             return field.get(obj);
-        } catch (ReflectiveOperationException e) {
+            //IC:
+        } catch (Throwable e) {
             throw new Asn1EncodingException(
                     "Failed to read " + obj.getClass().getName() + "." + field.getName(), e);
         }
@@ -505,7 +510,8 @@ public final class Asn1DerEncoder {
     }
 
     private static final class JavaToDerConverter {
-        private JavaToDerConverter() {}
+        private JavaToDerConverter() {
+        }
 
         public static byte[] toDer(Object source, Asn1Type targetType, Asn1Type targetElementType)
                 throws Asn1EncodingException {
@@ -565,20 +571,21 @@ public final class Asn1DerEncoder {
                         return toOid((String) source);
                     }
                     break;
-                case SEQUENCE:
-                {
-                    Asn1Class containerAnnotation =
-                            sourceType.getDeclaredAnnotation(Asn1Class.class);
+                case SEQUENCE: {
+//                    Asn1Class containerAnnotation =
+//                            sourceType.getDeclaredAnnotation(Asn1Class.class);
+                    Asn1Class containerAnnotation = Annotations.getDeclaredAnnotation(sourceType, Asn1Class.class);
                     if ((containerAnnotation != null)
                             && (containerAnnotation.type() == Asn1Type.SEQUENCE)) {
                         return toSequence(source);
                     }
                     break;
                 }
-                case CHOICE:
-                {
-                    Asn1Class containerAnnotation =
-                            sourceType.getDeclaredAnnotation(Asn1Class.class);
+                case CHOICE: {
+//                    Asn1Class containerAnnotation =
+//                            sourceType.getDeclaredAnnotation(Asn1Class.class);
+                    Asn1Class containerAnnotation = Annotations.getDeclaredAnnotation(sourceType, Asn1Class.class);
+
                     if ((containerAnnotation != null)
                             && (containerAnnotation.type() == Asn1Type.CHOICE)) {
                         return toChoice(source);

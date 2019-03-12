@@ -46,7 +46,6 @@ import java.security.SignatureException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -375,7 +374,7 @@ public abstract class V1SchemeSigner {
             Attributes entryAttrs = new Attributes();
             entryAttrs.putValue(
                     entryDigestAttributeName,
-                    Base64.getEncoder().encodeToString(entryDigest));
+                    android.util.Base64.encodeToString(entryDigest, android.util.Base64.DEFAULT));
             ByteArrayOutputStream sectionOut = new ByteArrayOutputStream();
             byte[] sectionBytes;
             try {
@@ -448,7 +447,7 @@ public abstract class V1SchemeSigner {
         MessageDigest md = getMessageDigestInstance(manifestDigestAlgorithm);
         mainAttrs.putValue(
                 getManifestDigestAttributeName(manifestDigestAlgorithm),
-                Base64.getEncoder().encodeToString(md.digest(manifest.contents)));
+                android.util.Base64.encodeToString(md.digest(manifest.contents), android.util.Base64.DEFAULT));
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         try {
             SignatureFileWriter.writeMainSection(out, mainAttrs);
@@ -464,7 +463,7 @@ public abstract class V1SchemeSigner {
             Attributes attrs = new Attributes();
             attrs.putValue(
                     entryDigestAttributeName,
-                    Base64.getEncoder().encodeToString(sectionDigest));
+                    android.util.Base64.encodeToString(sectionDigest, android.util.Base64.DEFAULT));
 
             try {
                 SignatureFileWriter.writeIndividualSection(out, sectionName, attrs);

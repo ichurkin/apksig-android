@@ -60,7 +60,9 @@ public final class Hints {
                 out.writeInt(clampToInt(pinByteRange.end - pinByteRange.start));
             }
         } catch (IOException ex) {
-            throw new AssertionError("impossible", ex);
+            //throw new AssertionError("impossible", ex);
+            //IC
+            throw new RuntimeException("impossible", ex);
         }
         return bos.toByteArray();
     }

@@ -24,7 +24,8 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.nio.charset.StandardCharsets;
+//IC: instead of nio
+import com.android.apksig.icutils.Charsets;
 import java.util.zip.DataFormatException;
 import java.util.zip.Inflater;
 
@@ -341,7 +342,7 @@ public class LocalFileRecord {
             long crc32,
             long uncompressedSize,
             DataSink output) throws IOException {
-        byte[] nameBytes = name.getBytes(StandardCharsets.UTF_8);
+        byte[] nameBytes = name.getBytes(Charsets.UTF8);
         int recordSize = HEADER_SIZE_BYTES + nameBytes.length;
         ByteBuffer result = ByteBuffer.allocate(recordSize);
         result.order(ByteOrder.LITTLE_ENDIAN);
@@ -380,7 +381,10 @@ public class LocalFileRecord {
         long dataStartOffsetInArchive = mStartOffsetInArchive + mDataStartOffset;
         try {
             if (mDataCompressed) {
-                try (InflateSinkAdapter inflateAdapter = new InflateSinkAdapter(sink)) {
+                //IC
+                InflateSinkAdapter inflateAdapter = null;
+                try {
+                    inflateAdapter = new InflateSinkAdapter(sink);
                     lfhSection.feed(dataStartOffsetInArchive, mDataSize, inflateAdapter);
                     long actualUncompressedSize = inflateAdapter.getOutputByteCount();
                     if (actualUncompressedSize != mUncompressedDataSize) {
@@ -394,6 +398,14 @@ public class LocalFileRecord {
                         throw new ZipFormatException("Data of entry " + mName + " malformed", e);
                     }
                     throw e;
+                }finally{
+                    if(inflateAdapter!=null){
+                        try{
+                            inflateAdapter.close();
+                        }catch(Throwable e){
+
+                        }
+                    }
                 }
             } else {
                 lfhSection.feed(dataStartOffsetInArchive, mDataSize, sink);

@@ -16,7 +16,9 @@
 
 package com.android.apksig.internal.jar;
 
-import java.nio.charset.StandardCharsets;
+//IC: StandardCharsets instead of nio
+import com.android.apksig.icutils.Charsets;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -126,7 +128,7 @@ public class ManifestParser {
         } else if (bytes.length == 0) {
             return "";
         } else {
-            return new String(bytes, StandardCharsets.UTF_8);
+            return new String(bytes, Charsets.UTF8);
         }
     }
 
@@ -295,8 +297,8 @@ public class ManifestParser {
          * Constructs a new {@code Section}.
          *
          * @param startOffset start offset (in bytes) of the section in the input file
-         * @param sizeBytes size (in bytes) of the section in the input file
-         * @param attrs attributes contained in the section
+         * @param sizeBytes   size (in bytes) of the section in the input file
+         * @param attrs       attributes contained in the section
          */
         public Section(int startOffset, int sizeBytes, List<Attribute> attrs) {
             mStartOffset = startOffset;

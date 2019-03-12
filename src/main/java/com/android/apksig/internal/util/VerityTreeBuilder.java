@@ -16,6 +16,7 @@
 
 package com.android.apksig.internal.util;
 
+import com.android.apksig.icutils.Math;
 import com.android.apksig.internal.zip.ZipUtils;
 import com.android.apksig.util.DataSink;
 import com.android.apksig.util.DataSource;
@@ -155,6 +156,7 @@ public class VerityTreeBuilder {
         levelOffset[0] = 0;
         for (int i = 0; i < levelSize.size(); i++) {
             // We don't support verity tree if it is larger then Integer.MAX_VALUE.
+            //IC: other Math
             levelOffset[i + 1] = levelOffset[i] + Math.toIntExact(
                     levelSize.get(levelSize.size() - i - 1));
         }
