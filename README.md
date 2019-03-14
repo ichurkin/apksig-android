@@ -1,3 +1,27 @@
+This is apksig library from https://android.googlesource.com/platform/tools/apksig/ ported to Android.
+Use it to validate APK files from inside of android application 
+
+USAGE:
+
+```
+dependencies {
+    implementation 'com.github.ichurkin:apksig-android:1.0.0'
+}
+```
+
+```
+ApkVerifier.Builder builder = new ApkVerifier.Builder(file);
+ApkVerifier.Result result = builder.build().verify();
+if (!result.isVerified()) {
+    //do smth
+    return null;
+}
+//also you can extract certificate from apk
+List<X509Certificate> signerCertificates = result.getSignerCertificates();
+return signerCertificates.get(0);
+```
+
+
 # apksig
 
 apksig is a project which aims to simplify APK signing and checking whether APK signatures are
@@ -12,12 +36,6 @@ between different versions of the Android platform. apksig thus thoroughly check
 signature is expected to verify on all Android platform versions supported by the APK. When signing
 an APK, apksig chooses the most appropriate cryptographic algorithms based on the Android platform
 versions supported by the APK being signed.
-
-The project consists of two subprojects:
-
-  * apksig -- a pure Java library, and
-  * apksigner -- a pure Java command-line tool based on the apksig library.
-
 
 ## apksig library
 
@@ -35,17 +53,3 @@ apksig library offers three primitives:
 _NOTE: Some public classes of the library are in packages having the word "internal" in their name.
 These are not public API of the library. Do not use \*.internal.\* classes directly because these
 classes may change any time without regard to existing clients outside of `apksig` and `apksigner`._
-
-
-## apksigner command-line tool
-
-apksigner command-line tool offers two operations:
-
-  * sign the provided APK so that it verifies on all Android platforms supported by the APK. Run
-    `apksigner sign` for usage information.
-  * check whether the provided APK's signatures are expected to verify on all Android platforms
-    supported by the APK. Run `apksigner verify` for usage information.
-
-The tool determines the range of Android platform versions (API Levels) supported by the APK by
-inspecting the APK's AndroidManifest.xml. This behavior can be overridden by specifying the range
-of platform versions on the command-line.
