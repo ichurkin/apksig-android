@@ -1,13 +1,21 @@
-// Generic Gradle project
-
-apply plugin: 'java'
-
-sourceCompatibility = '1.8'
-
-repositories {
-    jcenter()
+buildscript {
+    repositories {
+        google()
+        jcenter()
+        
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:3.3.0'
+    }
 }
 
-dependencies {
-    testCompile 'junit:junit:4.12'
+allprojects {
+    repositories {
+        google()
+        jcenter()
+    }
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
 }
